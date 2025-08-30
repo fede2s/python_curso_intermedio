@@ -1,12 +1,6 @@
 import flet
-import modelo.db_01_crear_base as cb
-import modelo.db_02_crear_tabla as crear_tb
-import modelo.db_03_insertar_datos as lib_alta
-import modelo.db_04_borrar_registro as lib_baja
-import modelo.db_05_actualizar_registro as lib_modificacion
-import modelo.db_06_consultar_tabla as lib_consulta
-import modelo.db_08_consultar_columnas as con_col
-import vista.vista_abmc_tabla as vista_tab
+from modelo.cls_db_sqlite3 import DbSqlite3
+import vista.cls_vista_abmc_tabla as vista_tab
 import modelo.regex_validar_clave as lib_regex_clave
 
 
@@ -24,16 +18,37 @@ class ControladorDeTablas:
                     "ID_SUPLENTE INTEGER NOT NULL"
                 ]
                 ):
+        """----------------------------------------------------------
+        Tabla con datos:
+        En el constructor del controlador, instancio una tabla de 
+        base de datos donde en su constructor:
+        1) Primero verifico si existe la base y sino la creo
+        2) Despues verifico si la tabla está creada en la base de 
+        datos y sino la creo
         
+        Después en el metodo inicializar del controlador y llamando
+        metodos de la vista y metodos de la tabla de la base de
+        datos:
+        1) Defino las funciones ABM y Alerta para manejar la logica
+        entre la vista y el modelo (tabla en base de datos)
+        2) Consulto datos de la tabla a la base de datos.
+        3) Consulto los títulos de las columnas de la tabla
+        en la base de datos.
+        4) Construyo la tabla en flet asignandole los
+        títulos a cada columna y los datos a cada fila
+        """
+        self.tabla_bd = DbSqlite3(
+            nombre_base_de_datos,
+            nombre_tabla,
+            campos_de_tabla
+        )
         self.registro = []
         self.page = page
         self.separador = ''
-        self.vista = vista_tab.VistaABMCDeTablas(self.page,nombre_tabla)
+        self.vista = \
+            vista_tab.VistaABMCDeTablas(self.page,nombre_tabla)
         self.nombre_base_de_datos = nombre_base_de_datos
         self.nombre_tabla = nombre_tabla
-        #self.base = 
-        #cb.crear_base(self.nombre_base_de_datos)
-        
         self.campos_de_tabla = campos_de_tabla
         self.vista.page.controls.clear()
         self.inicializar()
@@ -52,14 +67,16 @@ class ControladorDeTablas:
 
             #llamo a la funcion insertar datos en sqlite3
             try:
-                lib_alta.insertar_datos(self.nombre_base_de_datos, self.nombre_tabla, datos )
-                datos = lib_consulta.consultar_tabla(self.nombre_base_de_datos, self.nombre_tabla)
+                self.tabla_bd.insertar_datos(datos)
+                datos = self.tabla_bd.consultar_tabla()
                 self.actualizar_vista()
-                self.vista.alerta_evento.title = 'Registro agregado a base de datos'
+                self.vista.alerta_evento.title = \
+                    'Registro agregado a base de datos'
                 alerta(e)
             except Exception as error:
                 print(error)
-                self.vista.alerta_evento.title = 'No se pudo insertar el registro'
+                self.vista.alerta_evento.title = \
+                    'No se pudo insertar el registro'
                 alerta(e)
             
             
@@ -73,22 +90,20 @@ class ControladorDeTablas:
             #selecciono la primera celda del registro
             id = self.vista.registro_modificable.controls[0].value
 
-            #verifico si existe, porque sino no lo puedo borrar\
-            #  y debo informarlo
-            registro = lib_consulta.consultar_tabla(self.nombre_base_de_datos,
-                                         self.nombre_tabla,
-                                         id)
+            """
+            verifico si existe, porque sino no lo puedo borrar
+            y debo informarlo
+            """
+            registro = self.tabla_bd.consultar_tabla(id)
             if registro == []:
                 self.vista.alerta_evento.title=\
-                    f'No existe el registro {id\
-                    }, no se puede borrar'
+                    f'No existe el registro {id}'\
+                        + ', no se puede borrar'
                 alerta(e)
                 return
             
             try:
-                lib_baja.borrar_registro(self.nombre_base_de_datos, 
-                                         self.nombre_tabla, 
-                                         id)
+                self.tabla_bd.borrar_registro(id)
                 self.actualizar_vista()
                 self.vista.alerta_evento.title = \
                     f'Registro con id={id} eliminado'
@@ -101,15 +116,15 @@ class ControladorDeTablas:
         def modificacion(e):
             id = self.vista.registro_modificable.controls[0].value
 
-            #verifico si existe, porque sino no lo puedo modificar\
-            #  y debo informarlo
-            registro = lib_consulta.consultar_tabla(self.nombre_base_de_datos,
-                                         self.nombre_tabla,
-                                         id)
+            """
+            verifico si existe, porque sino no lo puedo modificar
+            y debo informarlo
+            """
+            registro = self.tabla_bd.consultar_tabla(id)
             if registro == []:
                 self.vista.alerta_evento.title=\
-                    f'No existe el registro {id\
-                    }, no se puede modificar'
+                    f'No existe el registro {id}'\
+                    +', no se puede modificar'
                 alerta(e)
                 return
             
@@ -121,9 +136,7 @@ class ControladorDeTablas:
                 print(nuevos_datos)
 
             try:
-                lib_modificacion.actualizar_registro(
-                    self.nombre_base_de_datos,
-                    self.nombre_tabla,
+                self.tabla_bd.actualizar_registro(
                     id,
                     tuple(nuevos_datos))
                 self.actualizar_vista()
@@ -135,31 +148,11 @@ class ControladorDeTablas:
                 print(error)
             alerta(e)
         
-        """----------------------------------------------------------
-        Tabla con datos:
-        Primero verifico si la tabla está creada en la base de datos
-        Después consulto datos de la tabla a la base de datos.
-        Consulto también los títulos de las columnas en la base de
-        datos.
-        Finalmente, construyo la tabla en flet asignandole los
-        títulos a cada columna y los datos a cada fila
-        """
-        #Crear tabla de base de datos
-        crear_tb.crear_tabla(
-            self.nombre_base_de_datos, 
-            self.nombre_tabla, 
-            self.campos_de_tabla
-        )
+        
         #Cargo una lista de tuplas con los datos de la consulta sql
-        self.vista.datos = lib_consulta.consultar_tabla(
-            self.nombre_base_de_datos,
-            self.nombre_tabla
-        )
+        self.vista.datos = self.tabla_bd.consultar_tabla()
         # Cargo los titulos de las columnas
-        self.vista.titulos_columnas = con_col.obtener_columnas(
-            self.nombre_base_de_datos,
-            self.nombre_tabla
-        )
+        self.vista.titulos_columnas = self.tabla_bd.obtener_columnas()
         self.vista.inicializar_vista(
             alta,
             baja,
@@ -167,8 +160,5 @@ class ControladorDeTablas:
         )
         
     def actualizar_vista(self):
-        self.vista.datos = lib_consulta.consultar_tabla(
-            self.nombre_base_de_datos,
-            self.nombre_tabla
-        )
+        self.vista.datos = self.tabla_bd.consultar_tabla()
         self.vista.actualizar_tabla()

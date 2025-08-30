@@ -1,6 +1,6 @@
 import flet as ft
 
-#funcion copiada de https://github.com/flet-dev/examples/blob/main/python/apps/controls-gallery/examples/layout/divider/02_draggable_divider.py
+#funcion copiada de repositorio oficial de flet https://github.com/flet-dev/examples/blob/main/python/apps/controls-gallery/examples/layout/divider/02_draggable_divider.py
 def generar_separador(page,
                       botones,
                       tabla):

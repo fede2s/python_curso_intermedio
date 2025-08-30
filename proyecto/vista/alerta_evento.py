@@ -1,6 +1,6 @@
 import flet as ft
 
-# copié código de acá
+# copié código del repositorio oficial de flet
 # https://github.com/flet-dev/examples/blob/main/python/apps/controls-gallery/examples/dialogs/alertdialog/01_basic_and_modal_dialogs.py
 
 def generar_alerta(texto):

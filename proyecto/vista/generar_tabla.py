@@ -1,6 +1,6 @@
 import flet as ft
 
-# copiado de https://github.com/flet-dev/examples/blob/main/python/apps/controls-gallery/examples/layout/datatable/01_basic_datatable.py
+# copiado de repositorio oficial de flet https://github.com/flet-dev/examples/blob/main/python/apps/controls-gallery/examples/layout/datatable/01_basic_datatable.py
 # lo hice dinamico para que reciba una lista de titulos de columnas
 # y una lista de filas, donde cada fila es una lista de celdas
 def generar_tabla(columnas_txt, filas_lista_txt):

@@ -1,6 +1,6 @@
 import flet as ft
 
-def generar_filas(datos):
+def generar_filas_de_tabla(datos):
     filas =[]
     for dato in datos:
         celdas = []

@@ -1,4 +1,4 @@
-import controlador.abmc_de_tablas as abmc
+import controlador.cls_abmc_de_tablas as abmc
 import flet
 
 
