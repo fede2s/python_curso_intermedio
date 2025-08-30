@@ -4,7 +4,8 @@ los metodos estaticos o de clase
 
 tenemos que usar descriptores: es una palabra que se agrega antes de 
 método/rutina/funcion precedido de un arroba, que hace algo sobre el 
-método antes de que sea retornado
+método antes de que sea retornado. Ademas se pueden apilar y pasar
+parámetros a los decoradores.
 Descriptores:
     @classmethod
     @staticmethod
@@ -35,7 +36,7 @@ entonces es atributo de clase porque es más global
 #Los metodos de clase los puedo llamar directo de la clase
 print(OperacionesM.sumar(2,3))
 
-"""
+"""##################################################################
 El static method no es de clase ni de instancia, por tanto no puedo
 utilizar atributos de instancia ni atributos de clase
 """
