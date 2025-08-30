@@ -5,7 +5,6 @@ Se le pueden agregar extensiones: plantillas
 
 Documentacion: sphinx-doc.org/en/master/tutorial/index.html
 
-En la carpeta archivos que genere previamente...
 ejecutar en entorno virtual virtualenv:
     virtualenv para_sphinx -p C\Users\PCDocuments\Python\Python39\python.exe
 
