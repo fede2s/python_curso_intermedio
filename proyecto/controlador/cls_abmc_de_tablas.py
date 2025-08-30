@@ -2,6 +2,8 @@ import flet
 from modelo.cls_db_sqlite3 import DbSqlite3
 import vista.cls_vista_abmc_tabla as vista_tab
 import modelo.regex_validar_clave as lib_regex_clave
+from modelo.cls_log_excepciones import RegistroLogError
+import datetime
 
 
 #controlador principal de la app
@@ -52,6 +54,7 @@ class ControladorDeTablas:
         self.campos_de_tabla = campos_de_tabla
         self.vista.page.controls.clear()
         self.inicializar()
+        self.log='log_errores.txt'
 
     def inicializar(self):
         def alta(e):
@@ -60,11 +63,18 @@ class ControladorDeTablas:
             for campo in self.vista.registro_modificable.controls:
                 datos.append(campo.value)
 
+            """
             if lib_regex_clave.validar_clave(datos[0]) == False:
                 self.vista.alerta_evento.title = 'Clave inválida'
                 alerta(e)
                 return
-
+            """
+            try:
+                lib_regex_clave.validar_clave(datos[0])
+            except RegistroLogError as log:
+                print("Error al validar la clave")
+                log.registrar_error()
+            
             #llamo a la funcion insertar datos en sqlite3
             try:
                 self.tabla_bd.insertar_datos(datos)
@@ -89,6 +99,13 @@ class ControladorDeTablas:
         def baja(e):
             #selecciono la primera celda del registro
             id = self.vista.registro_modificable.controls[0].value
+            
+            """Verifico si es valida la clave"""
+            try:
+                lib_regex_clave.validar_clave(id)
+            except RegistroLogError as log:
+                print("Error al validar la clave")
+                log.registrar_error()
 
             """
             verifico si existe, porque sino no lo puedo borrar
@@ -115,6 +132,15 @@ class ControladorDeTablas:
 
         def modificacion(e):
             id = self.vista.registro_modificable.controls[0].value
+
+            """
+            Valido la clave
+            """
+            try:
+                lib_regex_clave.validar_clave(id)
+            except RegistroLogError as log:
+                print("Error al validar la clave")
+                log.registrar_error()
 
             """
             verifico si existe, porque sino no lo puedo modificar
