@@ -9,17 +9,17 @@ import vista.generar_filas_para_tablas as lib_filas_tabla
 
 class VistaABMCDeTablas:
     def __init__(self, page, nombre_tabla):
-        #configuración
+        # configuración
         self.page = page
         self.page.title = f"ABMC de tabla {nombre_tabla}"
         self.page.scroll = "always"
         self.page.update()
 
-        #para funcionamiento
+        # para funcionamiento
         self.titulos_columnas = []
         self.datos = []
 
-        #Objetos visibles
+        # Objetos visibles
         self.botones = None
         self.registro_modificable = None
         self.tabla = None
@@ -29,18 +29,20 @@ class VistaABMCDeTablas:
         )
 
     def inicializar_tabla(self):
-        #genero una tabla de forma dinamica con la tabla que estoy
-        # consultando y con la vista que tengo para tablas
+        """
+        genero una tabla de forma dinamica con la tabla que estoy
+        consultando y con la vista que tengo para tablas
+        """
         self.tabla = gen_tab.generar_tabla(
-            columnas_txt = self.titulos_columnas, 
-            filas_lista_txt = self.datos
+            columnas_txt=self.titulos_columnas,
+            filas_lista_txt=self.datos
         )
 
     def actualizar_tabla(self):
         """
         self.separador.controls[2].clean()
         self.separador.controls[2] = gen_tab.generar_tabla(
-            columnas_txt = self.titulos_columnas, 
+            columnas_txt = self.titulos_columnas,
             filas_lista_txt = self.datos
         )
         """
@@ -48,28 +50,26 @@ class VistaABMCDeTablas:
         self.tabla.rows = lib_filas_tabla.generar_filas_de_tabla(self.datos)
         self.page.update()
 
-
-    def inicializar_botones(self,
-                            funcion_alta,
-                            funcion_baja,
-                            funcion_modificacion
-                            ):
+    def inicializar_botones(
+            self,
+            funcion_alta,
+            funcion_baja,
+            funcion_modificacion):
         """----------------------------------------------------------
         Botones: primero creo boton alta, baja, modificacion
         Después los junto en una fila usando la funcion generar filas
         y pasandole una lista de los botones
         """
-        boton_alta = vista.cls_boton.Boton("Alta", funcion_alta)                       
+        boton_alta = vista.cls_boton.Boton("Alta", funcion_alta)
         boton_baja = vista.cls_boton.Boton("Baja", funcion_baja)
         boton_modificacion = vista.cls_boton.Boton(
             "Modificacion",
             funcion_modificacion)
-        
+
         self.botones = vista.cls_fila_grafica.FilaGrafica(
-            [boton_alta,
-            boton_baja,
-            boton_modificacion])
-        
+            [boton_alta, boton_baja, boton_modificacion]
+        )
+
     def inicializar_registro_modificable(self):
         """----------------------------------------------------------
         Celdas modificables / Registro modificable:
@@ -79,10 +79,11 @@ class VistaABMCDeTablas:
         """
         registro_modificable = []
         for campo in self.titulos_columnas:
-            registro_modificable.append(ft.TextField(value='',
-                                                label=campo,
-                                                width=150
-                                                ))
+            registro_modificable.append(
+                ft.TextField(
+                    value='',
+                    label=campo,
+                    width=150))
         lista_celdas_modificables = []
         for campo in self.titulos_columnas:
             lista_celdas_modificables.append(
@@ -90,18 +91,17 @@ class VistaABMCDeTablas:
                 )
         self.registro_modificable = \
             vista.cls_fila_grafica.FilaGrafica(registro_modificable)
-    
+
     def inicializar_vista(
             self,
             alta,
             baja,
-            modificacion
-        ):
-        self.inicializar_botones(alta,baja,modificacion)
+            modificacion):
+        self.inicializar_botones(alta, baja, modificacion)
         self.inicializar_registro_modificable()
         self.inicializar_tabla()
         """----------------------------------------------------------
-        Formulario: 
+        Formulario:
         es una columnas donde 1era fila va la fila de botones
         en segunda fila va una fila de celdas modificables
         """
@@ -109,7 +109,7 @@ class VistaABMCDeTablas:
             self.botones,
             self.registro_modificable
         ])
-       
+
         """----------------------------------------------------------
         Genero un separador que separa con una línea móvil al
         formulario de la tabla.
@@ -117,10 +117,8 @@ class VistaABMCDeTablas:
         a la página.
         """
         self.separador = gen_sep.generar_separador(
-            self.page, 
-            formulario, 
+            self.page,
+            formulario,
             self.tabla
             )
         self.page.add(self.separador)
-
-    

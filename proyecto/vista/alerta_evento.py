@@ -1,7 +1,11 @@
 import flet as ft
 
-# copié código del repositorio oficial de flet
-# https://github.com/flet-dev/examples/blob/main/python/apps/controls-gallery/examples/dialogs/alertdialog/01_basic_and_modal_dialogs.py
+""" copié código del repositorio oficial de flet
+https://github.com/flet-dev/examples/blob/main/python/apps/
+controls-gallery/examples/dialogs/alertdialog/01_basic_and_
+modal_dialogs.py
+"""
+
 
 def generar_alerta(texto):
     dlg = ft.AlertDialog(
@@ -16,6 +20,5 @@ def generar_alerta(texto):
     return ft.Column(
         [
             ft.ElevatedButton(texto, on_click=open_dlg)
-           
         ]
     )

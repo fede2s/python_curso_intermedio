@@ -1,33 +1,32 @@
 import flet
+import datetime
 from modelo.cls_db_sqlite3 import DbSqlite3
 import vista.cls_vista_abmc_tabla as vista_tab
 import modelo.regex_validar_clave as lib_regex_clave
 from modelo.cls_log_excepciones import RegistroLogError
-import datetime
 
 
-#controlador principal de la app
+# controlador principal de la app
 class ControladorDeTablas:
-    def __init__(self,
-                page,
-                nombre_base_de_datos="federico_dos_santos.db",
-                nombre_tabla="agenda_de_guardias",
-                campos_de_tabla=[
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT",
-                    "fecha DATE NOT NULL",
-                    "hora_inicio TIME NOT NULL",
-                    "ID_EMPLEADO INTEGER NOT NULL",
-                    "ID_SUPLENTE INTEGER NOT NULL"
-                ]
-                ):
+    def __init__(
+            self,
+            page,
+            nombre_base_de_datos="federico_dos_santos.db",
+            nombre_tabla="agenda_de_guardias",
+            campos_de_tabla=[
+                "id INTEGER PRIMARY KEY AUTOINCREMENT",
+                "fecha DATE NOT NULL",
+                "hora_inicio TIME NOT NULL",
+                "ID_EMPLEADO INTEGER NOT NULL",
+                "ID_SUPLENTE INTEGER NOT NULL"]):
         """----------------------------------------------------------
         Tabla con datos:
-        En el constructor del controlador, instancio una tabla de 
+        En el constructor del controlador, instancio una tabla de
         base de datos donde en su constructor:
         1) Primero verifico si existe la base y sino la creo
-        2) Despues verifico si la tabla está creada en la base de 
+        2) Despues verifico si la tabla está creada en la base de
         datos y sino la creo
-        
+
         Después en el metodo inicializar del controlador y llamando
         metodos de la vista y metodos de la tabla de la base de
         datos:
@@ -48,18 +47,18 @@ class ControladorDeTablas:
         self.page = page
         self.separador = ''
         self.vista = \
-            vista_tab.VistaABMCDeTablas(self.page,nombre_tabla)
+            vista_tab.VistaABMCDeTablas(self.page, nombre_tabla)
         self.nombre_base_de_datos = nombre_base_de_datos
         self.nombre_tabla = nombre_tabla
         self.campos_de_tabla = campos_de_tabla
         self.vista.page.controls.clear()
         self.inicializar()
-        self.log='log_errores.txt'
+        self.log = 'log_errores.txt'
 
     def inicializar(self):
         def alta(e):
             datos = []
-            #armo los datos a insertar en una lista
+            # armo los datos a insertar en una lista
             for campo in self.vista.registro_modificable.controls:
                 datos.append(campo.value)
 
@@ -74,8 +73,8 @@ class ControladorDeTablas:
             except RegistroLogError as log:
                 print("Error al validar la clave")
                 log.registrar_error()
-            
-            #llamo a la funcion insertar datos en sqlite3
+
+            # llamo al metodo insertar datos en sqlite3
             try:
                 self.tabla_bd.insertar_datos(datos)
                 datos = self.tabla_bd.consultar_tabla()
@@ -88,19 +87,17 @@ class ControladorDeTablas:
                 self.vista.alerta_evento.title = \
                     'No se pudo insertar el registro'
                 alerta(e)
-            
-            
-            
+
         def alerta(e):
             e.control.page.overlay.append(self.vista.alerta_evento)
             self.vista.alerta_evento.open = True
             e.control.page.update()
-        
+
         def baja(e):
-            #selecciono la primera celda del registro
+            # selecciono la primera celda del registro
             id = self.vista.registro_modificable.controls[0].value
-            
-            """Verifico si es valida la clave"""
+
+            # Verifico si es valida la clave
             try:
                 lib_regex_clave.validar_clave(id)
             except RegistroLogError as log:
@@ -113,12 +110,12 @@ class ControladorDeTablas:
             """
             registro = self.tabla_bd.consultar_tabla(id)
             if registro == []:
-                self.vista.alerta_evento.title=\
+                self.vista.alerta_evento.title = \
                     f'No existe el registro {id}'\
-                        + ', no se puede borrar'
+                    + ', no se puede borrar'
                 alerta(e)
                 return
-            
+
             try:
                 self.tabla_bd.borrar_registro(id)
                 self.actualizar_vista()
@@ -148,12 +145,12 @@ class ControladorDeTablas:
             """
             registro = self.tabla_bd.consultar_tabla(id)
             if registro == []:
-                self.vista.alerta_evento.title=\
+                self.vista.alerta_evento.title = \
                     f'No existe el registro {id}'\
-                    +', no se puede modificar'
+                    + ', no se puede modificar'
                 alerta(e)
                 return
-            
+
             nuevos_datos_celdas = self.vista.registro_modificable.controls[1:]
             nuevos_datos = []
             for celda in nuevos_datos_celdas:
@@ -173,9 +170,8 @@ class ControladorDeTablas:
                     f'No se pudo actualizar el registro con id={id}'
                 print(error)
             alerta(e)
-        
-        
-        #Cargo una lista de tuplas con los datos de la consulta sql
+
+        # Cargo una lista de tuplas con los datos de la consulta sql
         self.vista.datos = self.tabla_bd.consultar_tabla()
         # Cargo los titulos de las columnas
         self.vista.titulos_columnas = self.tabla_bd.obtener_columnas()
@@ -184,7 +180,7 @@ class ControladorDeTablas:
             baja,
             modificacion
         )
-        
+
     def actualizar_vista(self):
         self.vista.datos = self.tabla_bd.consultar_tabla()
         self.vista.actualizar_tabla()

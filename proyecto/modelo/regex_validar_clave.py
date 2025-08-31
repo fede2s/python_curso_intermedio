@@ -1,6 +1,7 @@
+import datetime
 from re import compile
 from modelo.cls_log_excepciones import RegistroLogError
-import datetime
+
 
 def validar_clave(clave):
     """
@@ -12,4 +13,8 @@ def validar_clave(clave):
     if patron.match(clave):
         return True
     else:
-        raise RegistroLogError(f"ID ingresado: {clave}\t","Archivo: regex_validar_clave.py\t", f"timestamp {datetime.datetime.now()}")
+        raise RegistroLogError(
+            f"ID ingresado: {clave}\t",
+            "Archivo: regex_validar_clave.py\t",
+            f"timestamp {datetime.datetime.now()}"
+        )

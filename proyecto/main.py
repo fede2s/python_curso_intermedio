@@ -1,8 +1,10 @@
-import controlador.cls_abmc_de_tablas as abmc
 import flet
+import controlador.cls_abmc_de_tablas as abmc
 
 
-def main(page:flet.Page):
+def main(page: flet.Page):
     controlador = abmc.ControladorDeTablas(page)
     print(page)
+
+
 flet.app(target=main)
