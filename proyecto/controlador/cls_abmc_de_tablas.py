@@ -2,12 +2,31 @@ import flet
 import datetime
 from modelo.cls_db_sqlite3 import DbSqlite3
 import vista.cls_vista_abmc_tabla as vista_tab
-import modelo.regex_validar_clave as lib_regex_clave
+import modelo.cls_validador_clave as lib_regex_clave
 from modelo.cls_log_excepciones import RegistroLogError
 
 
 # controlador principal de la app
 class ControladorDeTablas:
+    """
+    Tabla con datos:
+
+    En el constructor del controlador, instancio una tabla de base de
+    datos donde en su constructor:
+        1) Primero verifico si existe la base y si no la creo
+        2) Después verifico si la tabla está creada en la base de
+           datos y si no la creo
+
+    Después, en el método inicializar del controlador y llamando
+    métodos de la vista y métodos de la tabla de la base de datos:
+        1) Defino las funciones ABM y Alerta para manejar la lógica
+           entre la vista y el modelo (tabla en base de datos)
+        2) Consulto datos de la tabla a la base de datos
+        3) Consulto los títulos de las columnas de la tabla en la base
+           de datos
+        4) Construyo la tabla en Flet asignándole los títulos a cada
+           columna y los datos a cada fila
+    """
     def __init__(
             self,
             page,
@@ -19,25 +38,6 @@ class ControladorDeTablas:
                 "hora_inicio TIME NOT NULL",
                 "ID_EMPLEADO INTEGER NOT NULL",
                 "ID_SUPLENTE INTEGER NOT NULL"]):
-        """----------------------------------------------------------
-        Tabla con datos:
-        En el constructor del controlador, instancio una tabla de
-        base de datos donde en su constructor:
-        1) Primero verifico si existe la base y sino la creo
-        2) Despues verifico si la tabla está creada en la base de
-        datos y sino la creo
-
-        Después en el metodo inicializar del controlador y llamando
-        metodos de la vista y metodos de la tabla de la base de
-        datos:
-        1) Defino las funciones ABM y Alerta para manejar la logica
-        entre la vista y el modelo (tabla en base de datos)
-        2) Consulto datos de la tabla a la base de datos.
-        3) Consulto los títulos de las columnas de la tabla
-        en la base de datos.
-        4) Construyo la tabla en flet asignandole los
-        títulos a cada columna y los datos a cada fila
-        """
         self.tabla_bd = DbSqlite3(
             nombre_base_de_datos,
             nombre_tabla,
@@ -62,7 +62,7 @@ class ControladorDeTablas:
             for campo in self.vista.registro_modificable.controls:
                 datos.append(campo.value)
             try:
-                lib_regex_clave.validar_clave(datos[0])
+                lib_regex_clave.ValidadorClave.validar_clave(datos[0])
             except RegistroLogError as log:
                 print("Error al validar la clave")
                 log.registrar_error()
@@ -92,7 +92,7 @@ class ControladorDeTablas:
 
             # Verifico si es valida la clave
             try:
-                lib_regex_clave.validar_clave(id)
+                lib_regex_clave.ValidadorClave.validar_clave(id)
             except RegistroLogError as log:
                 print("Error al validar la clave")
                 log.registrar_error()
@@ -127,7 +127,7 @@ class ControladorDeTablas:
             Valido la clave
             """
             try:
-                lib_regex_clave.validar_clave(id)
+                lib_regex_clave.ValidadorClave.validar_clave(id)
             except RegistroLogError as log:
                 print("Error al validar la clave")
                 log.registrar_error()

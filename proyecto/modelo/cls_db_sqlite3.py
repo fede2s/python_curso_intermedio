@@ -5,22 +5,32 @@ class DbSqlite3():
     """
     Clase con...
 
-    Atributos de instancia:
-        nombre_base
-        nombre_tabla
-        campos
+    Atributos de instancia
+    ======================
 
-    Metodos de instancia privados:
-        __crear_base()
-        __crear_tabla()
+    - **nombre_base**: nombre de la base de datos SQLite.
+    - **nombre_tabla**: nombre de la tabla a utilizar.
+    - **campos**: definición de las columnas de la tabla.
 
-    Metodos publicos:
-        insertar_datos()
-        borrar_registro()
-        actualizar_registro()
-        consultar_tabla()
-        listar_tablas()
-        obtener_columnas()
+    Métodos de instancia privados
+    =============================
+
+    - **__crear_base(self)**: crea la base de datos si no existe.
+    - **__crear_tabla(self)**: crea la tabla en la base de datos si no
+      existe.
+
+    Métodos públicos
+    ================
+
+    - **insertar_datos(self)**: inserta registros en la tabla.
+    - **borrar_registro(self)**: elimina un registro de la tabla.
+    - **actualizar_registro(self)**: actualiza un registro existente.
+    - **consultar_tabla(self)**: consulta todos los registros de la
+      tabla.
+    - **listar_tablas(self)**: lista todas las tablas de la base de
+      datos.
+    - **obtener_columnas(self)**: obtiene los nombres de las columnas
+      de la tabla.
     """
     def __init__(
             self,

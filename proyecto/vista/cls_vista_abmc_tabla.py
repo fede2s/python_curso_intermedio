@@ -1,13 +1,45 @@
 import flet as ft
-import vista.generar_separadores as gen_sep
-import vista.generar_tabla as gen_tab
 import vista.cls_boton
 import vista.cls_fila_grafica
 import vista.cls_columna_grafica
-import vista.generar_filas_para_tablas as lib_filas_tabla
+import vista.cls_generador_obj_flet as obj_flet
 
 
-class VistaABMCDeTablas:
+class VistaABMCDeTablas():
+    """
+    Atributos de instancia
+    ======================
+
+    - **page**: página de Flet.
+    - **titulos_columnas**: muestra qué representa cada columna.
+    - **datos**: contiene la información a graficar en una tabla de
+      Flet.
+    - **botones**: fila de botones de Flet con funciones **ABM** que
+      provienen del controlador (y este a su vez del modelo).
+    - **registro_modificable**: utilizado para funciones de **ABM**.
+    - **tabla**: la tabla a graficar con Flet y con los datos que
+      provee el controlador.
+    - **separador**: separa la parte superior (botones y registro
+      modificable) de la parte inferior (tabla).
+    - **alerta_evento**: alerta cuando se ejecuta una función **ABM** o
+      cuando ocurre un error.
+
+    Métodos de instancia públicos
+    =============================
+
+    - **actualizar_tabla(self)**: actualiza los datos de la tabla.
+    - **inicializar_vista(self, alta, baja, modificacion)**: inicializa
+      la vista asignando las funciones de **ABM**.
+
+    Métodos de instancia privados
+    =============================
+
+    - **__inicializar_botones(self)**: inicializa los botones de la
+      vista.
+    - **__inicializar_registro_modificable(self)**: inicializa el
+      registro modificable.
+    - **__inicializar_tabla(self)**: inicializa la tabla de la vista.
+    """
     def __init__(self, page, nombre_tabla):
         # configuración
         self.page = page
@@ -28,27 +60,29 @@ class VistaABMCDeTablas:
             title=ft.Text('')
         )
 
-    def inicializar_tabla(self):
+    def __inicializar_tabla(self):
         """
         genero una tabla de forma dinamica con la tabla que estoy
         consultando y con la vista que tengo para tablas
         """
-        self.tabla = gen_tab.generar_tabla(
+        self.tabla = obj_flet.GeneradorObjetosFlet.generar_tabla(
             columnas_txt=self.titulos_columnas,
             filas_lista_txt=self.datos
         )
 
     def actualizar_tabla(self):
+        """Actualiza los datos en la tabla"""
         self.tabla.rows.clear()
-        self.tabla.rows = lib_filas_tabla.generar_filas_de_tabla(self.datos)
+        self.tabla.rows = \
+            obj_flet.GeneradorObjetosFlet.generar_filas_de_tabla(self.datos)
         self.page.update()
 
-    def inicializar_botones(
+    def __inicializar_botones(
             self,
             funcion_alta,
             funcion_baja,
             funcion_modificacion):
-        """----------------------------------------------------------
+        """
         Botones: primero creo boton alta, baja, modificacion
         Después los junto en una fila usando la funcion generar filas
         y pasandole una lista de los botones
@@ -63,8 +97,8 @@ class VistaABMCDeTablas:
             [boton_alta, boton_baja, boton_modificacion]
         )
 
-    def inicializar_registro_modificable(self):
-        """----------------------------------------------------------
+    def __inicializar_registro_modificable(self):
+        """
         Celdas modificables / Registro modificable:
         Agrego elementos a la lista REGISTRO que a la vez es
         un atributo de la clase abmc_de_tablas. Ese nuevo
@@ -90,10 +124,13 @@ class VistaABMCDeTablas:
             alta,
             baja,
             modificacion):
-        self.inicializar_botones(alta, baja, modificacion)
-        self.inicializar_registro_modificable()
-        self.inicializar_tabla()
-        """----------------------------------------------------------
+        """
+        Inicializo los distintos objetos flet que componen la vista
+        """
+        self.__inicializar_botones(alta, baja, modificacion)
+        self.__inicializar_registro_modificable()
+        self.__inicializar_tabla()
+        """
         Formulario:
         es una columnas donde 1era fila va la fila de botones
         en segunda fila va una fila de celdas modificables
@@ -103,13 +140,13 @@ class VistaABMCDeTablas:
             self.registro_modificable
         ])
 
-        """----------------------------------------------------------
+        """
         Genero un separador que separa con una línea móvil al
         formulario de la tabla.
         Finalmente el formulario que contiene todos los objetos
         a la página.
         """
-        self.separador = gen_sep.generar_separador(
+        self.separador = obj_flet.GeneradorObjetosFlet.generar_separador(
             formulario,
             self.tabla
             )
