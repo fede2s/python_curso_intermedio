@@ -19,13 +19,10 @@ release = '0.0.1'
 import os
 import sys
 
-# 1. La carpeta raíz del proyecto (../)
+# Agrego carpetas
 PROJECT_ROOT = os.path.abspath('..')
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
-
-# 2. Si tus módulos están en subcarpetas, añade cada una
-#    (puedes hacerlo de forma genérica si hay muchas)
 for subdir in ['vista', 'controlador', 'modelo']:
     path = os.path.abspath(os.path.join('..', subdir))
     if path not in sys.path:
