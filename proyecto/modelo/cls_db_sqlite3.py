@@ -14,7 +14,6 @@ class DbSqlite3():
         __crear_base()
         __crear_tabla()
 
-
     Metodos publicos:
         insertar_datos()
         borrar_registro()
@@ -47,7 +46,7 @@ class DbSqlite3():
     def __crear_tabla(self):
         campos = ', '.join(self.campos)
         sql = "CREATE TABLE if not exists " \
-            + f"{self.nombre_tabla} ({self.campos});"
+            + f"{self.nombre_tabla} ({campos});"
         try:
             con = sqlite3.connect(self.nombre_base)
             cursor = con.cursor()
@@ -61,9 +60,7 @@ class DbSqlite3():
         finally:
             con.close()
 
-    def insertar_datos(
-            self,
-            datos):
+    def insertar_datos(self, datos):
         con = sqlite3.connect(self.nombre_base)
         cursor = con.cursor()
         if len(datos) == 0:
@@ -71,17 +68,11 @@ class DbSqlite3():
             con.commit()
             con.close()
             return
-
-        """
-        armo la cantidad de placeholders necesarios para la cantidad
-        de datos
-        """
         placeholders = ', '.join(['?'] * len(datos))
         print(datos)
         print(placeholders)
         sql = f"INSERT INTO {self.nombre_tabla} " \
             f"VALUES ({placeholders})"
-
         cursor.execute(sql, datos)
         con.commit()
         con.close()
@@ -99,12 +90,7 @@ class DbSqlite3():
             self,
             id,
             nuevos_datos):
-        """
-        armo la cantidad de placeholders necesarios para la cantidad
-        de campos
-        """
         sql = f"UPDATE {self.nombre_tabla} SET "
-
         nombres_columnas = self.obtener_columnas()
         campos = nombres_columnas[1:]
         nombreid = nombres_columnas[0]
@@ -178,7 +164,6 @@ class DbSqlite3():
     def listar_tablas(self):
         con = sqlite3.connect(self.nombre_base)
         cursor = con.cursor()
-        # sql= "SHOW TABLES FROM base.db;"
         sql = "SELECT name FROM sqlite_master WHERE type='table';"
         cursor.execute(sql)
         tablas = cursor.fetchall()

@@ -2,7 +2,6 @@ import flet as ft
 
 
 def generar_separador(
-        page,
         botones,
         tabla):
     """

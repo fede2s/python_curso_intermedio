@@ -61,13 +61,6 @@ class ControladorDeTablas:
             # armo los datos a insertar en una lista
             for campo in self.vista.registro_modificable.controls:
                 datos.append(campo.value)
-
-            """
-            if lib_regex_clave.validar_clave(datos[0]) == False:
-                self.vista.alerta_evento.title = 'Clave inválida'
-                alerta(e)
-                return
-            """
             try:
                 lib_regex_clave.validar_clave(datos[0])
             except RegistroLogError as log:

@@ -4,10 +4,9 @@ import datetime
 
 class RegistroLogError(Exception):  # clase administradora
     """
-    registro de log, genera un txt con los errores
-    quiero poner la ruta a donde voy a guardar el modulo log
-    BASE_DIR = os.path.dirname((os.path.abspath((__file__))))
-    voy una carpeta atras para que me salga junto con el main el log.txt
+    Registro de log, genera un txt con los errores.
+    Voy una carpeta atras de donde estoy para que me
+    salga junto con el main el log.txt
     """
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     ruta = os.path.join(BASE_DIR, 'log_errores.txt')

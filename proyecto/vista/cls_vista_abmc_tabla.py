@@ -39,13 +39,6 @@ class VistaABMCDeTablas:
         )
 
     def actualizar_tabla(self):
-        """
-        self.separador.controls[2].clean()
-        self.separador.controls[2] = gen_tab.generar_tabla(
-            columnas_txt = self.titulos_columnas,
-            filas_lista_txt = self.datos
-        )
-        """
         self.tabla.rows.clear()
         self.tabla.rows = lib_filas_tabla.generar_filas_de_tabla(self.datos)
         self.page.update()
@@ -117,7 +110,6 @@ class VistaABMCDeTablas:
         a la página.
         """
         self.separador = gen_sep.generar_separador(
-            self.page,
             formulario,
             self.tabla
             )
